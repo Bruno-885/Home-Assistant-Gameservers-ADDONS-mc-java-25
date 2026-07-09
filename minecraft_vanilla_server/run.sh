@@ -55,12 +55,11 @@ install_java() {
         x86_64|amd64)  adoptium_arch="x64" ;;
         aarch64|arm64) adoptium_arch="aarch64" ;;
         *)             log_error "Nicht unterstützte Architektur: ${arch}"; exit 1 ;;
-     eagle esac
+    esac
 
     mkdir -p "${JRE_DIR}"
     TMP="/tmp/jre25.tar.gz"
     
-    # API URL updated to fetch Java 25 GA releases
     URL="https://adoptium.net{adoptium_arch}/jre/hotspot/normal/eclipse?project=jdk"
     
     curl -fL --retry 3 --retry-delay 2 "${URL}" -o "${TMP}"
