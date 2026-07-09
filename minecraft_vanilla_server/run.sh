@@ -20,12 +20,8 @@ echo "-----------------------------------------------------------"
 DATA_DIR="$(jq -r '.data_dir' /data/options.json)"
 XMS_MB="$(jq -r '.xms_mb' /data/options.json)"
 XMX_MB="$(jq -r '.xmx_mb' /data/options.json)"
-MC_VERSION="$(jq -r '.mc_version' /data/options.json)"
-SERVER_JAR_URL="$(jq -r '.server_jar_url' /data/options.json)"
 
 [[ "${DATA_DIR}" == "null" || -z "${DATA_DIR}" ]] && DATA_DIR="/share/minecraft-vanilla"
-[[ "${MC_VERSION}" == "null" || -z "${MC_VERSION}" ]] && MC_VERSION="latest"
-[[ "${SERVER_JAR_URL}" == "null" ]] && SERVER_JAR_URL=""
 
 CONTAINER_PORT="25565"
 
@@ -53,8 +49,7 @@ install_java() {
     mkdir -p "${JRE_DIR}"
     TMP="/tmp/jre25.tar.gz"
     
-    # URL completely hardcoded to skip any terminal script processing errors
-    URL="https://api.adoptium.net/v3/binary/latest/25/ga/linux/x64/jre/hotspot/normal/eclipse?project=jdk"
+    URL="https://adoptium.net"
     
     curl -fL --retry 3 --retry-delay 2 "${URL}" -o "${TMP}"
     rm -rf "${JRE_DIR:?}/"*
@@ -71,41 +66,12 @@ export PATH="${JAVA_HOME}/bin:${PATH}"
 log_info "Java Version: $(java -version 2>&1 | head -n1)"
 
 # -----------------------------------------------------------
-# Server-JAR ermitteln (Mojang piston-meta)
+# Server-JAR (Hardcoded to bypass broken API lookups)
 # -----------------------------------------------------------
 SERVER_JAR="server.jar"
 
-get_latest_jar() {
-    local manifest latest version_url vjson
-    manifest="$(curl -fsSL https://mojang.com)"
-    latest="$(echo "$manifest" | jq -r '.latest.release')"
-    version_url="$(echo "$manifest" | jq -r --arg id "$latest" '.versions[] | select(.id==$id) | .url')"
-    vjson="$(curl -fsSL "$version_url")"
-    echo "$vjson" | jq -r '.downloads.server.url'
-}
-
-get_version_jar() {
-    local ver="$1"
-    local manifest version_url vjson
-    manifest="$(curl -fsSL https://mojang.com)"
-    version_url="$(echo "$manifest" | jq -r --arg id "$ver" '.versions[] | select(.id==$id) | .url')"
-    [[ -z "$version_url" || "$version_url" == "null" ]] && { log_error "Unbekannte Minecraft-Version: ${ver}"; exit 1; }
-    vjson="$(curl -fsSL "$version_url")"
-    echo "$vjson" | jq -r '.downloads.server.url'
-}
-
-if [[ -n "${SERVER_JAR_URL}" ]]; then
-    JAR_URL="${SERVER_JAR_URL}"
-    log_info "Nutze benutzerdefinierte Server-JAR URL"
-else
-    if [[ "${MC_VERSION}" == "latest" ]]; then
-        JAR_URL="$(get_latest_jar)"
-        log_info "Nutze neueste Minecraft-Version"
-    else
-        JAR_URL="$(get_version_jar "${MC_VERSION}")"
-        log_info "Nutze Minecraft-Version ${MC_VERSION}"
-    fi
-fi
+# Directly utilizing the exact static Mojang link you provided
+JAR_URL="https://piston-data.mojang.com/v1/objects/823e2250d24b3ddac457a60c92a6a941943fcd6a/server.jar"
 
 URL_MARKER=".server_jar_url.txt"
 if [[ ! -f "${SERVER_JAR}" || ! -f "${URL_MARKER}" || "$(cat "${URL_MARKER}")" != "${JAR_URL}" ]]; then
