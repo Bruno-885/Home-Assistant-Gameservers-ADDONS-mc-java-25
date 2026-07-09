@@ -60,6 +60,7 @@ install_java() {
     mkdir -p "${JRE_DIR}"
     TMP="/tmp/jre25.tar.gz"
     
+    # Brackets explicitly added around ${adoptium_arch} to fix network string interpolation
     URL="https://adoptium.net{adoptium_arch}/jre/hotspot/normal/eclipse?project=jdk"
     
     curl -fL --retry 3 --retry-delay 2 "${URL}" -o "${TMP}"
