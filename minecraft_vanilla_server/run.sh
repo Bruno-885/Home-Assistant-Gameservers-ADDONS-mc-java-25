@@ -44,12 +44,12 @@ install_java() {
         return 0
     fi
 
-    log_info "Java 25 nicht gefunden – installiere Temurin JRE"
+    log_info "Java 25 has not been found!"
 
     mkdir -p "${JRE_DIR}"
     TMP="/tmp/jre25.tar.gz"
     
-    URL="https://adoptium.net"
+    URL="https://api.adoptium.net/v3/binary/latest/25/ga/linux/x64/jre/hotspot/normal/eclipse"
     
     curl -fL --retry 3 --retry-delay 2 "${URL}" -o "${TMP}"
     rm -rf "${JRE_DIR:?}/"*
@@ -87,7 +87,7 @@ cat > ./eula.txt <<'EOF'
 #By changing the setting below to TRUE you are indicating your agreement to the Minecraft EULA (https://aka.ms).
 eula=true
 EOF
-log_info "EULA automatisch akzeptiert"
+log_info "EULA has automatically been accepted!"
 
 # -----------------------------------------------------------
 # server.properties – Port fest setzen
