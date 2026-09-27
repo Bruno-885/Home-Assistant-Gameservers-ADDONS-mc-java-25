@@ -13,6 +13,7 @@
 ---
 
 <h1>Minecraft Vanilla Dedicated Server</h1>
+<h2>Unoff. Ver 2</h2>
 
 This Home Assistant Add-on allows you to run a **Minecraft Vanilla Dedicated Server**
 directly on **Home Assistant OS**, fully managed by the Supervisor.
