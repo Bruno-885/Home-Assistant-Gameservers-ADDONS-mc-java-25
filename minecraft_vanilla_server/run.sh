@@ -71,7 +71,9 @@ log_info "Java Version: $(java -version 2>&1 | head -n1)"
 SERVER_JAR="server.jar"
 
 # Directly utilizing the exact static Mojang link you provided
-JAR_URL="https://piston-data.mojang.com/v1/objects/823e2250d24b3ddac457a60c92a6a941943fcd6a/server.jar"
+# JAR_URL="https://piston-data.mojang.com/v1/objects/823e2250d24b3ddac457a60c92a6a941943fcd6a/server.jar" // 26.2 URL
+JAR_URL="https://piston-data.mojang.com/v1/objects/33680f5f2ac32864d6d7cf5e56a705fdb3e05f4c/server.jar" #26.3 URL
+
 
 URL_MARKER=".server_jar_url.txt"
 if [[ ! -f "${SERVER_JAR}" || ! -f "${URL_MARKER}" || "$(cat "${URL_MARKER}")" != "${JAR_URL}" ]]; then
